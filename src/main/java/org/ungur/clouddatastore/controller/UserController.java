@@ -1,5 +1,7 @@
 package org.ungur.clouddatastore.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,16 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    /**
+     * Get all users
+     *
+     * @return users
+     */
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    public List<User> addUser() {
+        return userService.getUsers();
+    }
 
     /**
      * Upsert new user

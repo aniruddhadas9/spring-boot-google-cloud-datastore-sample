@@ -1,5 +1,8 @@
 package org.ungur.clouddatastore.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.cloud.datastore.*;
 import org.springframework.scheduling.annotation.Async;
 import org.ungur.clouddatastore.model.BatchUser;
@@ -25,6 +28,27 @@ public class UserService {
     public void initializeKeyFactories() {
         log.info("Initializing key factories");
         userKeyFactory = datastore.newKeyFactory().setKind("User");
+    }
+
+    public List<User> getUsers() {
+        List<User> users = new ArrayList<User>();
+        Query<Entity> query = Query.newEntityQueryBuilder()
+            .setKind("User")
+            .setOrderBy(StructuredQuery.OrderBy.desc("email"))
+            .build();
+        QueryResults<Entity> tasks = datastore.run(query);
+        while (tasks.hasNext()){
+            Entity entity = tasks.next();
+            System.out.println(entity);
+            User user = new User();
+
+            user.setId(entity.getKey().getName());
+            user.setEmail(entity.getString("email"));
+            user.setFullName(entity.getString("fullName"));
+            user.setPassword(entity.getString("password"));
+            users.add(user);
+        }
+        return users;
     }
 
     public Entity createUser(User user) {
